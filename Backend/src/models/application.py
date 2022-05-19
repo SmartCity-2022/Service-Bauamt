@@ -14,7 +14,7 @@ class Application(Base):
     __tablename__ = "application"
 
     applicationID = Column(Integer, unique=True, primary_key=True, index=True)
-    userID = Column(Integer, ForeignKey("user.userID"))
+    citizen = Column(String(128)), ForeignKey("citizen.email")
     plz = Column(Integer, ForeignKey("location.plz"))
     address = Column(String(64))
     houseNr = Column(String(5))
@@ -26,6 +26,3 @@ class Application(Base):
     building_costs = Column(Float)
     construction = Column(String(32))
     heating_system = Column(String(32))
-
-    application_user = relationship("User", foreign_keys="Application.userID")
-    application_plz = relationship("Location", foreign_keys="Application.plz")

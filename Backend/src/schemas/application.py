@@ -8,7 +8,7 @@ class RequestApplication(BaseModel):
     """
     Request body expected when attempting to send an application.
     """
-    userID: int
+    email: int
     plz: int
     address: str
     houseNr: str

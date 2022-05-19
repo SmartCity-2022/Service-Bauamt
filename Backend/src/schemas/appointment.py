@@ -11,7 +11,7 @@ class RequestAppointment(BaseModel):
     Request body expected when attempting to send an application.
     """
 
-    userID: int
+    email: str
     plz: int
     date: datetime
 
