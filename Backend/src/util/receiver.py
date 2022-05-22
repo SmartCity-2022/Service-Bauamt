@@ -1,27 +1,32 @@
+import threading
+
 import pika
-import sys
+
+from fastapi import *
+from sqlalchemy.orm import Session
+from src.models.citizen import Citizen
+from src.util.database import *
 
 
-async def receive():
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host='localhost'))
-    channel = connection.channel()
+class Receiver(threading.Thread):
 
-    channel.exchange_declare(exchange='ExchangeDeclare', exchange_type='topic')
+    def run(self):
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        channel = connection.channel()
 
-    result = channel.queue_declare('QueueDeclare', exclusive=False)
-    queue_name = result.method.queue
+        channel.exchange_declare(exchange='microservice.eventbus', exchange_type='topic')
 
-    channel.queue_bind(
-        exchange='ExchangeDeclare', queue=queue_name, routing_key="test.post")
+        result = channel.queue_declare('', exclusive=False)
+        queue_name = result.method.queue
 
-    print(' [*] Waiting for Events. To exit press CTRL+C')
+        channel.queue_bind(exchange='microservice.eventbus', queue=queue_name, routing_key="*.#")
 
-    def callback(ch, method, properties, body):
-        print(" ---Event received--- \n")
-        print(f" [x] Routing Key: {method.routing_key}")
-        print(f" [x] Message: {body}", "\n\n\n")
+        print(' [*] Waiting for Events. To exit press CTRL+C')
 
-    channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
+        def callback(ch, method, properties, body):
+            if method.routing_key == "service.mainhub.register":
+                print(body)
 
-    channel.start_consuming()
+        channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
+
+        channel.start_consuming()

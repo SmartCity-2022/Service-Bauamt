@@ -2,6 +2,7 @@
 Starting file for uvicorn web server.
 Containing an app object to start from.
 """
+import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.routers import *
@@ -9,12 +10,22 @@ from src.util.receiver import *
 
 app = FastAPI()
 
-receive()
+
+
+@app.on_event('startup')
+async def startup() -> None:
+    threading.Thread(target=asyncio.run, args=(test(),)).start()
+
+
+async def test():
+    receiver = Receiver()
+    receiver.daemon = True
+    receiver.run()
+
 
 origins = [
     "http://localhost:8080"
 ]
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -23,7 +34,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 app.include_router(
     router=application.router,
@@ -42,4 +52,3 @@ app.include_router(
     prefix="/citizen",
     tags=["Citizen-Router"]
 )
-
