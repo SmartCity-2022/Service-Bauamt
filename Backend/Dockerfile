@@ -15,4 +15,4 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY . /code/
 
-CMD ["python", "manage.py", "runserver"]
+CMD ["python", "main.py"]
