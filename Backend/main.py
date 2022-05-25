@@ -7,14 +7,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.routers import *
 from src.util.receiver import *
+from src.util.sender import *
 
 app = FastAPI()
-
 
 
 @app.on_event('startup')
 async def startup() -> None:
     threading.Thread(target=asyncio.run, args=(test(),)).start()
+    send(key=configParser.get("rabbitMQ-routes", "HELLO"), payload="test")
 
 
 async def test():
