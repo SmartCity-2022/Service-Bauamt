@@ -12,8 +12,13 @@ class Receiver(threading.Thread):
 
     def run(self):
         configParser = init_config()
+        credentials = pika.PlainCredentials(configParser.get("rabbitMQ-configuration", "username"),
+                                            configParser.get("rabbitMQ-configuration", "password"))
         connection = pika.BlockingConnection(pika.ConnectionParameters(
-            host=configParser.get("rabbitMQ-configuration", "host")))
+            host=configParser.get("rabbitMQ-configuration", "host"),
+            port=configParser.get("rabbitMQ-configuration", "port"),
+            virtual_host='/',
+            credentials=credentials))
         channel = connection.channel()
 
         channel.exchange_declare(exchange=configParser.get("rabbitMQ-configuration", "exchange"), exchange_type='topic')
