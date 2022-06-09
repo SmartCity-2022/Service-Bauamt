@@ -1,3 +1,4 @@
+![GitHub tag (latest SemVer)](https://shields.herrvergesslich.de/github/v/tag/smartcity-2022/service-bauamt?label=Version)
 # Backend-Bauamt
 
 FastApi Python
