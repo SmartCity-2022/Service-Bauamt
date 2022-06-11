@@ -6,7 +6,10 @@ from src.util.config import *
 from fastapi import Request,Response, HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 import jwt
+import os
+import dotenv
 
+dotenv.load_dotenv()
 configParser = init_config()
 
 
@@ -25,7 +28,7 @@ class AuthorizeMiddleware(BaseHTTPMiddleware):
             raise HTTPException(status_code=403, detail="No cookies found!")
         if access and refresh:
             try:
-                decode = jwt.decode(access, configParser.get("jwt-secret", "secret"), algorithms=["HS256"])
+                decode = jwt.decode(access, os.getenv("SECRET"), algorithms=["HS256"])
             except(
                     jwt.InvalidTokenError,
                     jwt.InvalidKeyError,
