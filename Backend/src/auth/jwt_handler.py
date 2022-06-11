@@ -28,7 +28,7 @@ class AuthorizeMiddleware(BaseHTTPMiddleware):
             raise HTTPException(status_code=403, detail="No cookies found!")
         if access and refresh:
             try:
-                decode = jwt.decode(access, os.getenv("SECRET"), algorithms=["HS256"])
+                decode = jwt.decode(access, str(os.getenv("SECRET")), algorithms=["HS256"])
             except(
                     jwt.InvalidTokenError,
                     jwt.InvalidKeyError,
