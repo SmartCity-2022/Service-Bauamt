@@ -34,7 +34,7 @@ class Receiver(threading.Thread):
 
         def callback(ch, method, properties, body):
             if method.routing_key == configParser.get("rabbitMQ-routes", "WORLD"):
-                os.environ["SECRET"] = properties
+                os.environ["SECRET"] = str(properties)
 
         channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
 
