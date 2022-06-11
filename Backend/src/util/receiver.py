@@ -21,7 +21,8 @@ class Receiver(threading.Thread):
             credentials=credentials))
         channel = connection.channel()
 
-        channel.exchange_declare(exchange=configParser.get("rabbitMQ-configuration", "exchange"), exchange_type='topic')
+        channel.exchange_declare(exchange=configParser.get("rabbitMQ-configuration", "exchange"), exchange_type='topic',
+                                 durable=True)
 
         result = channel.queue_declare('', exclusive=False)
         queue_name = result.method.queue
@@ -33,7 +34,7 @@ class Receiver(threading.Thread):
 
         def callback(ch, method, properties, body):
             if method.routing_key == configParser.get("rabbitMQ-routes", "WORLD"):
-                print("Hello")
+                configParser.set("jwt-secret", "secret", properties)
 
         channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
 

@@ -7,15 +7,16 @@ configParser = init_config()
 
 def send(key, payload):
     credentials = pika.PlainCredentials(configParser.get("rabbitMQ-configuration", "username"),
-                                            configParser.get("rabbitMQ-configuration", "password"))
+                                        configParser.get("rabbitMQ-configuration", "password"))
     connection = pika.BlockingConnection(pika.ConnectionParameters(
-            host=configParser.get("rabbitMQ-configuration", "host"),
-            port=configParser.get("rabbitMQ-configuration", "port"),
-            virtual_host='/',
-            credentials=credentials))
+        host=configParser.get("rabbitMQ-configuration", "host"),
+        port=configParser.get("rabbitMQ-configuration", "port"),
+        virtual_host='/',
+        credentials=credentials))
     channel = connection.channel()
 
-    channel.exchange_declare(exchange=configParser.get("rabbitMQ-configuration", "EXCHANGE"), exchange_type='topic')
+    channel.exchange_declare(exchange=configParser.get("rabbitMQ-configuration", "EXCHANGE"), exchange_type='topic',
+                             durable=True)
 
     routing_key = key
     channel.basic_publish(
