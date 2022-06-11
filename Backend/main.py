@@ -2,6 +2,7 @@
 Starting file for uvicorn web server.
 Containing an app object to start from.
 """
+from fastapi import FastAPI
 import asyncio
 from fastapi.middleware.cors import CORSMiddleware
 from src.routers import *
