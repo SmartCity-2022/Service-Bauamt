@@ -1,11 +1,11 @@
 import threading
 
 import pika
-
-from fastapi import *
-from sqlalchemy.orm import Session
-from src.models.citizen import Citizen
+import os
+import dotenv
 from src.util.database import *
+
+dotenv.load_dotenv()
 
 
 class Receiver(threading.Thread):
@@ -21,7 +21,8 @@ class Receiver(threading.Thread):
             credentials=credentials))
         channel = connection.channel()
 
-        channel.exchange_declare(exchange=configParser.get("rabbitMQ-configuration", "exchange"), exchange_type='topic')
+        channel.exchange_declare(exchange=configParser.get("rabbitMQ-configuration", "exchange"), exchange_type='topic',
+                                 durable=True)
 
         result = channel.queue_declare('', exclusive=False)
         queue_name = result.method.queue
@@ -33,7 +34,7 @@ class Receiver(threading.Thread):
 
         def callback(ch, method, properties, body):
             if method.routing_key == configParser.get("rabbitMQ-routes", "WORLD"):
-                print("Hello")
+                os.environ["SECRET"] = properties
 
         channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
 
