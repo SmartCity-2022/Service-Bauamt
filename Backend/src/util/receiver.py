@@ -22,7 +22,7 @@ class Receiver(threading.Thread):
         channel = connection.channel()
 
         channel.exchange_declare(exchange=configParser.get("rabbitMQ-configuration", "exchange"), exchange_type='topic',
-                                 durable=True, auto_delete=True)
+                                 durable=True)
 
         result = channel.queue_declare('', exclusive=False)
         queue_name = result.method.queue
