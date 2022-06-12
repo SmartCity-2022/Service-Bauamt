@@ -1,13 +1,7 @@
 import threading
-
 import pika
+import os
 from src.util.database import *
-
-global secret
-
-
-def getSecret():
-    return secret
 
 
 class Receiver(threading.Thread):
@@ -36,9 +30,8 @@ class Receiver(threading.Thread):
 
         def callback(ch, method, properties, body):
             if method.routing_key == configParser.get("rabbitMQ-routes", "WORLD"):
-                global secret
                 secret = body.decode("utf-8")
-                print(secret)
+                os.environ["SECRET"] = secret
 
         channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
 
