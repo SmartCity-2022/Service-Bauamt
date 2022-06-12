@@ -6,6 +6,7 @@ import dotenv
 from src.util.database import *
 
 dotenv.load_dotenv()
+global secret
 
 
 class Receiver(threading.Thread):
@@ -34,9 +35,8 @@ class Receiver(threading.Thread):
 
         def callback(ch, method, properties, body):
             if method.routing_key == configParser.get("rabbitMQ-routes", "WORLD"):
+                global secret
                 secret = body.decode("utf-8")
-                with open(".env", "w") as f:
-                    f.write("SECRET=" + secret)
 
         channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
 
