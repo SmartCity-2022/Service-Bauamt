@@ -5,7 +5,7 @@ from starlette.responses import JSONResponse
 from src.util.config import *
 from fastapi import Request,Response, HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
-import src.util.receiver as rc
+from src.util.receiver import getSecret
 import jwt
 import urllib3
 
@@ -29,15 +29,15 @@ class AuthorizeMiddleware(BaseHTTPMiddleware):
                 content={"detail": "Cookies", "body": "Missing cookies"}
             )
         try:
-            print(rc.secret)
-            decode = jwt.decode(access, rc.secret, algorithms=["HS256"])
+            print(getSecret())
+            decode = jwt.decode(access, getSecret(), algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
             try:
                 http = urllib3.PoolManager()
                 token = http.request("POST",
                                      configParser.get("jwt-secret", "MAIN_HUB_URL") + "/token", {"token": refresh})
                 request.cookies.__setattr__("accessToken", token)
-                refresh_decode = jwt.decode(token, rc.secret, algorithms=["HS256"])
+                refresh_decode = jwt.decode(token, getSecret(), algorithms=["HS256"])
                 request.state.email = refresh_decode.get("email")
             except (
                 jwt.InvalidTokenError,
