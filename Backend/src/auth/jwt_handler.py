@@ -31,6 +31,7 @@ class AuthorizeMiddleware(BaseHTTPMiddleware):
                 content={"detail": str("Cookies"), "body": str("Missing cookies")}
             )
         try:
+            printf(str(os.getenv("SECRET")))
             decode = jwt.decode(access, str(os.getenv("SECRET")), algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
             try:
