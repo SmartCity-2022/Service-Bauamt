@@ -28,17 +28,18 @@ class AuthorizeMiddleware(BaseHTTPMiddleware):
         if refresh is None or access is None:
             return JSONResponse(
                 status_code=status.HTTP_403_FORBIDDEN,
-                content={"detail": str("Cookies"), "body": str("Missing cookies")}
+                content={"detail": "Cookies", "body": "Missing cookies"}
             )
         try:
+            print(os.getenv("SECRET"))
             decode = jwt.decode(access, os.getenv("SECRET"), algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
             try:
                 http = urllib3.PoolManager()
                 token = http.request("POST",
-                                     configParser.get("jwt-secret", "MAIN_HUB_URL") + "/api/token", {"token": refresh})
+                                     configParser.get("jwt-secret", "MAIN_HUB_URL") + "/token", {"token": refresh})
                 request.cookies.__setattr__("accessToken", token)
-                refresh_decode = jwt.decode(token, str(os.getenv("SECRET")), algorithms=["HS256"])
+                refresh_decode = jwt.decode(token, os.getenv("SECRET"), algorithms=["HS256"])
                 request.state.email = refresh_decode.get("email")
             except (
                 jwt.InvalidTokenError,
