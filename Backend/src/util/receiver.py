@@ -37,7 +37,6 @@ class Receiver(threading.Thread):
                 secret = str(body)
                 with open(".env", "w") as f:
                     f.write("SECRET=" + secret[1:])
-                f.close()
 
         channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
 
