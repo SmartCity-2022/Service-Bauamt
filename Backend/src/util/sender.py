@@ -16,7 +16,7 @@ def send(key, payload):
     channel = connection.channel()
 
     channel.exchange_declare(exchange=configParser.get("rabbitMQ-configuration", "EXCHANGE"), exchange_type='topic',
-                             durable=True,auto_delete=True)
+                             durable=True)
 
     routing_key = key
     channel.basic_publish(
