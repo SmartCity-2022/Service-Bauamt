@@ -1,12 +1,13 @@
 import threading
 
 import pika
-import os
-import dotenv
 from src.util.database import *
 
-dotenv.load_dotenv()
 global secret
+
+
+def getSecret():
+    return secret
 
 
 class Receiver(threading.Thread):
