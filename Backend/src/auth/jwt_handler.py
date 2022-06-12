@@ -31,8 +31,7 @@ class AuthorizeMiddleware(BaseHTTPMiddleware):
                 content={"detail": str("Cookies"), "body": str("Missing cookies")}
             )
         try:
-            printf(str(os.getenv("SECRET")))
-            decode = jwt.decode(access, str(os.getenv("SECRET")), algorithms=["HS256"])
+            decode = jwt.decode(access, os.getenv("SECRET"), algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
             try:
                 http = urllib3.PoolManager()
@@ -41,18 +40,25 @@ class AuthorizeMiddleware(BaseHTTPMiddleware):
                 request.cookies.__setattr__("accessToken", token)
                 refresh_decode = jwt.decode(token, str(os.getenv("SECRET")), algorithms=["HS256"])
                 request.state.email = refresh_decode.get("email")
-            except Exception as error:
-                return JSONResponse(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    content={"detail": str(error), "body": str(error)}
-                )
-        except(
+            except (
                 jwt.InvalidTokenError,
                 jwt.InvalidKeyError,
                 jwt.InvalidAlgorithmError,
                 jwt.ImmatureSignatureError,
                 jwt.MissingRequiredClaimError,
                 jwt.InvalidAudienceError,
+            ) as error:
+                return JSONResponse(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    content={"detail": str(error), "body": str(error)}
+                )
+        except(
+            jwt.InvalidTokenError,
+            jwt.InvalidKeyError,
+            jwt.InvalidAlgorithmError,
+            jwt.ImmatureSignatureError,
+            jwt.MissingRequiredClaimError,
+            jwt.InvalidAudienceError,
         ) as error:
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
