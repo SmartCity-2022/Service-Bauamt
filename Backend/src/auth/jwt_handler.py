@@ -8,6 +8,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 import jwt
 import os
 import dotenv
+import urllib3
 
 dotenv.load_dotenv()
 configParser = init_config()
@@ -24,24 +25,38 @@ class AuthorizeMiddleware(BaseHTTPMiddleware):
 
         access = request.cookies.get("accessToken")
         refresh = request.cookies.get("refreshToken")
-        if not access or not refresh:
-            raise HTTPException(status_code=403, detail="No cookies found!")
-        if access and refresh:
+        if refresh is None or access is None:
+            return JSONResponse(
+                status_code=status.HTTP_403_FORBIDDEN,
+                content={"detail": str("Cookies"), "body": str("Missing cookies")}
+            )
+        try:
+            decode = jwt.decode(access, str(os.getenv("SECRET")), algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
             try:
-                decode = jwt.decode(access, str(os.getenv("SECRET")), algorithms=["HS256"])
-            except(
-                    jwt.InvalidTokenError,
-                    jwt.InvalidKeyError,
-                    jwt.InvalidAlgorithmError,
-                    jwt.ImmatureSignatureError,
-                    jwt.MissingRequiredClaimError,
-                    jwt.ExpiredSignatureError,
-                    jwt.InvalidAudienceError
-            ) as error:
+                http = urllib3.PoolManager()
+                token = http.request("POST",
+                                     configParser.get("jwt-secret", "MAIN_HUB_URL") + "/api/token", {"token": refresh})
+                request.cookies.__setattr__("accessToken", token)
+                refresh_decode = jwt.decode(token, str(os.getenv("SECRET")), algorithms=["HS256"])
+                request.state.email = refresh_decode.get("email")
+            except Exception as error:
                 return JSONResponse(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     content={"detail": str(error), "body": str(error)}
                 )
-            else:
-                request.state.email = decode
-            return await call_next(request)
+        except(
+                jwt.InvalidTokenError,
+                jwt.InvalidKeyError,
+                jwt.InvalidAlgorithmError,
+                jwt.ImmatureSignatureError,
+                jwt.MissingRequiredClaimError,
+                jwt.InvalidAudienceError,
+        ) as error:
+            return JSONResponse(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                content={"detail": str(error), "body": str(error)}
+            )
+        else:
+            request.state.email = decode.get("email")
+        return await call_next(request)
