@@ -2,13 +2,15 @@
 Starting file for uvicorn web server.
 Containing an app object to start from.
 """
-from fastapi import FastAPI
 import asyncio
+
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.routers import *
 from src.util.receiver import *
 from src.util.sender import *
 from src.auth.jwt_handler import AuthorizeMiddleware
+import time
 
 app = FastAPI()
 
@@ -16,6 +18,7 @@ app = FastAPI()
 @app.on_event('startup')
 async def startup() -> None:
     threading.Thread(target=asyncio.run, args=(test(),)).start()
+    time.sleep(5)
     send(key=configParser.get("rabbitMQ-routes", "HELLO"), payload="test")
 
 
