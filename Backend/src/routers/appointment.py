@@ -1,4 +1,3 @@
-
 """
 Router object and all necessary routes
 for account objects.
@@ -7,9 +6,10 @@ from fastapi import *
 from sqlalchemy.orm import Session
 
 from src.models.appointment import Appointment
+from src.models.location import Location
+from src.models.citizen import Citizen
 from src.schemas.appointment import RequestAppointment, RespondAppointment
 from src.util.database import init_db
-
 
 router = APIRouter()
 
@@ -38,21 +38,41 @@ def get_by_id(email: str, db: Session = Depends(init_db)):
 
 
 @router.post("/new", response_model=RespondAppointment)
-def add_event(request: RequestAppointment, db: Session = Depends(init_db)):
+def add_event(ra: RequestAppointment, request: Request, db: Session = Depends(init_db)):
     """
     Add an event to the DB. \n
+    :param ra:
     :param request: Request body to create event \n
-    :param token: Token to identify logged in user \n
     :param db: DB to browse \n
     :return: OK if success
     """
-    new_appointment = Appointment(
-        eventname=request.eventname,
-        location=request.location,
-        appointment=request.appointment,
-        maxAttendants=request.maxAttendants,
-        description=request.description
+
+    new_location = Location(
+        plz=ra.plz,
+        location=ra.ort
     )
+
+    new_citizen = Citizen(
+        email=request.state.__getattr__("email")
+    )
+
+    if db.query(Location).filter(Location.plz == ra.plz).first() is None:
+        db.add(new_location)
+        db.commit()
+
+    if db.query(Citizen).filter(Citizen.email == request.state.__getattr__("email")).first() is None:
+        db.add(new_citizen)
+        db.commit()
+
+    new_appointment = Appointment(
+        email=request.state.__getattr__("email"),
+        plz=ra.plz,
+        firstname=ra.vorname,
+        lastname=ra.nachname,
+        address=ra.straße,
+        houseNr=ra.hausenummer,
+    )
+
     db.add(new_appointment)
     db.commit()
     return new_appointment

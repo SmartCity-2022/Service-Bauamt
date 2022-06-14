@@ -11,10 +11,12 @@ class RequestAppointment(BaseModel):
     Request body expected when attempting to send an application.
     """
 
-    email: str
+    vorname: str
+    nachname: str
+    straße: str
+    hausenummer: str
     plz: int
-    date: datetime
-
+    ort: str
 
     class Config:
         orm_mode = True
@@ -24,7 +26,11 @@ class RespondAppointment(BaseModel):
     """
     Respond body when an application is successful.
     """
-    response: str
+    email: str
+    firstname: str
+    lastname: str
+    address: str
+    houseNr: str
 
     class Config:
         orm_mode = True
