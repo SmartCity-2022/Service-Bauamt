@@ -1,4 +1,3 @@
-
 """
 Router object and all necessary routes
 for account objects.
@@ -7,9 +6,10 @@ from fastapi import *
 from sqlalchemy.orm import Session
 
 from src.models.application import Application
+from src.models.location import Location
+from src.models.citizen import Citizen
 from src.schemas.application import RequestApplication, RespondApplication
 from src.util.database import init_db
-
 
 router = APIRouter()
 
@@ -38,19 +38,45 @@ def get_by_id(email: str, db: Session = Depends(init_db)):
 
 
 @router.post("/new", response_model=RespondApplication)
-def add_event(request: RequestApplication, db: Session = Depends(init_db)):
+def add_event(ra: RequestApplication, request: Request, db: Session = Depends(init_db)):
     """
     Add an event to the DB. \n
     :param request: Request body to create Application \n
     :param db: DB to browse \n
     :return: OK if success
     """
+    new_location = Location(
+        plz=ra.plz,
+        location=ra.ort
+    )
+
+    new_citizen = Citizen(
+        email=request.state.__getattr__("email")
+    )
+
+    if db.query(Location).filter(Location.plz == ra.plz).first() is None:
+        db.add(new_location)
+        db.commit()
+
+    if db.query(Citizen).filter(Citizen.email == request.state.__getattr__("email")).first() is None:
+        db.add(new_citizen)
+        db.commit()
+
     new_application = Application(
-        eventname=request.eventname,
-        location=request.location,
-        appointment=request.appointment,
-        maxAttendants=request.maxAttendants,
-        description=request.description
+        email=request.state.__getattr__("email"),
+        plz=ra.plz,
+        firstname=ra.vorname,
+        lastname=ra.nachname,
+        address=ra.straße,
+        houseNr=ra.hausenummer,
+        prefabricated_house=ra.fertighaus,
+        house_use=ra.nutzung,
+        footprint=ra.grundflaeche,
+        floor=ra.geschosse,
+        residential_units=ra.wohneinheiten,
+        building_costs=ra.baukosten,
+        construction=ra.bauweise,
+        heating_system=ra.heizungsanlage,
     )
     db.add(new_application)
     db.commit()
