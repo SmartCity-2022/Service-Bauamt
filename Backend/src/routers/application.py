@@ -15,25 +15,24 @@ router = APIRouter()
 
 
 @router.get("/")
-def get_all(db: Session = Depends(init_db)):
+def get_all(request: Request, db: Session = Depends(init_db)):
     """
-    Get all accounts registered in the database. \n
+    Get all accounts registered in the database by a user. \n
+    :param request:
     :param db: Database to interact with \n
     :return: List of all accounts
     """
-    return db.query(Application).all()
+    return db.query(Application).filter(Application.email == request.state.__getattr__("email")).all()
 
 
 @router.get("/{id}")
-def get_by_id(email: str, db: Session = Depends(init_db)):
+def get_by_id(db: Session = Depends(init_db)):
     """
     Get a specific account. \n
     :param email: Email to identify Application \n
     :param db: DB to browse \n
     :return: Account matching to email
     """
-    if db.query(Application).filter(Application.applicationID == id).first() is None:
-        raise HTTPException(status_code=404, detail="Application not found.")
     return db.query(Application).filter(Application.applicationID == id).first()
 
 
@@ -41,13 +40,14 @@ def get_by_id(email: str, db: Session = Depends(init_db)):
 def add_event(ra: RequestApplication, request: Request, db: Session = Depends(init_db)):
     """
     Add an event to the DB. \n
+    :param ra:
     :param request: Request body to create Application \n
     :param db: DB to browse \n
     :return: OK if success
     """
     new_location = Location(
         plz=ra.plz,
-        location=ra.ort
+        location=ra.location
     )
 
     new_citizen = Citizen(
@@ -65,18 +65,19 @@ def add_event(ra: RequestApplication, request: Request, db: Session = Depends(in
     new_application = Application(
         email=request.state.__getattr__("email"),
         plz=ra.plz,
-        firstname=ra.vorname,
-        lastname=ra.nachname,
-        address=ra.straße,
-        houseNr=ra.hausenummer,
-        prefabricated_house=ra.fertighaus,
-        house_use=ra.nutzung,
-        footprint=ra.grundflaeche,
-        floor=ra.geschosse,
-        residential_units=ra.wohneinheiten,
-        building_costs=ra.baukosten,
-        construction=ra.bauweise,
-        heating_system=ra.heizungsanlage,
+        firstname=ra.firstname,
+        lastname=ra.lastname,
+        address=ra.address,
+        houseNr=ra.houseNr,
+        construction_project=ra.construction_project,
+        prefabricated_house=ra.prefabricated_house,
+        house_use=ra.house_use,
+        footprint=ra.footprint,
+        floor=ra.floor,
+        residential_units=ra.residential_units,
+        building_costs=ra.building_costs,
+        construction=ra.construction,
+        heating_system=ra.heating_system,
     )
     db.add(new_application)
     db.commit()

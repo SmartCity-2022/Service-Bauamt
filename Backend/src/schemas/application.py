@@ -8,20 +8,21 @@ class RequestApplication(BaseModel):
     """
     Request body expected when attempting to send an application.
     """
-    vorname: str
-    nachname: str
-    straße: str
-    hausenummer: str
+    firstname: str
+    lastname: str
+    address: str
+    houseNr: str
     plz: int
-    ort: str
-    fertighaus: bool
-    nutzung: str
-    grundflaeche: float
-    geschosse: int
-    wohneinheiten: int
-    baukosten: float
-    bauweise: str
-    heizungsanlage: str
+    location: str
+    construction_project: str
+    prefabricated_house: str
+    house_use: str
+    footprint: float
+    floor: int
+    residential_units: int
+    building_costs: float
+    construction: str
+    heating_system: str
 
     class Config:
         orm_mode = True
@@ -37,7 +38,8 @@ class RespondApplication(BaseModel):
     address: str
     houseNr: str
     plz: int
-    prefabricated_house: bool
+    construction_project: str
+    prefabricated_house: str
     house_use: str
     footprint: float
     floor: int

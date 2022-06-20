@@ -11,12 +11,12 @@ class RequestAppointment(BaseModel):
     Request body expected when attempting to send an application.
     """
 
-    vorname: str
-    nachname: str
-    straße: str
-    hausenummer: str
+    firstname: str
+    lastname: str
+    address: str
+    houseNr: str
     plz: int
-    ort: str
+    location: str
 
     class Config:
         orm_mode = True

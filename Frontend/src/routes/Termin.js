@@ -27,13 +27,13 @@ const Termin = () => {
   }
 
   const submit = async () => {
-    await axios.post(process.env.REACT_APP_API_URL + '/appointment/new', {
-      "vorname": state.vorname,
-      "nachname": state.nachname,
-      "ort": state.ort,
-      "plz": state.plz,
-      "straße": state.straße,
-      "hausnummer": state.hausnummer,
+    await axios.post(process.env.REACT_APP_API_URL + 'appointment/new', {
+      "firstname": state.vorname,
+      "lastname": state.nachname,
+      "address": state.straße,
+      "houseNr": state.hausnummer,
+      "plz": Number(state.plz),
+      "location": state.ort,
     },
       {withCredentials: true})
   }
@@ -54,12 +54,12 @@ const Termin = () => {
   return (
   <Container maxWidth="" style={allStyle}>
 
-  <div class="row m-2" style={divStyle}>
-    <div class="container">
-      <div class="row header_text_wrapper v-align">
-        <div class="col-xs-12 col-sm-12 col-md-12">
+  <div className="row m-2" style={divStyle}>
+    <div className="container">
+      <div className="row header_text_wrapper v-align">
+        <div className="col-xs-12 col-sm-12 col-md-12">
           <div className='col-md-8 offset-md-2'>
-            <h1 className=''>Erstellen sie kostenlos Ihren Bauantrag</h1>
+            <h1 className=''>Machen sie hier ganz einfach ihren Termin</h1>
           </div>
         </div>
       </div>
@@ -73,7 +73,7 @@ const Termin = () => {
         <hr/>
     </div>
     <div className="col-md-3 p-4">
-    <Stack component="form" noValidate spacing={3}>
+    <Stack noValidate spacing={3}>
       <TextField
         name="datum"
         id="datetime-local"
@@ -91,38 +91,30 @@ const Termin = () => {
     <div className="col-md-9">
       <div className="p-4">
         <div>
-            <form>
-              <form>
-                <div className="row pt-2">
-                  <div className="col">
-                    <input type="text" className="form-control" placeholder="Vorname" name='vorname' value={state.vorname} onChange={handleChange}></input>
-                  </div>
-                  <div className="col">
-                    <input type="text" className="form-control" placeholder="Nachname" name='nachname' value={state.nachname} onChange={handleChange}></input>
-                  </div>
-                </div>
-              </form>
-              <form>
-                <div className="row pt-2">
-                  <div className="col">
-                    <input type="text" className="form-control" placeholder="Ort" name='ort' value={state.ort} onChange={handleChange}></input>
-                  </div>
-                  <div className="col">
-                    <input type="number" className="form-control" placeholder="PLZ" name='plz' value={state.plz} onChange={handleChange}></input>
-                  </div>
-                </div>
-              </form>
-              <form>
-                <div className="row pt-2">
-                  <div className="col">
-                    <input type="text" className="form-control" placeholder="Straße" name='straße' value={state.straße} onChange={handleChange}></input>
-                  </div>
-                  <div className="col">
-                    <input type="text" className="form-control" placeholder="Hausnummer" name='hausnummer' value={state.hausnummer} onChange={handleChange}></input>
-                  </div>
-                </div>
-              </form>
-            </form>
+          <div className="row pt-2">
+            <div className="col">
+              <input type="text" className="form-control" placeholder="Vorname" name='vorname' onChange={handleChange}></input>
+            </div>
+            <div className="col">
+              <input type="text" className="form-control" placeholder="Nachname" name='nachname' onChange={handleChange}></input>
+            </div>
+          </div>
+          <div className="row pt-2">
+            <div className="col">
+              <input type="text" className="form-control" placeholder="Ort" name='ort' onChange={handleChange}></input>
+            </div>
+            <div className="col">
+              <input type="number" className="form-control" placeholder="PLZ" name='plz' onChange={handleChange}></input>
+            </div>
+          </div>
+          <div className="row pt-2">
+            <div className="col">
+              <input type="text" className="form-control" placeholder="Straße" name='straße' onChange={handleChange}></input>
+            </div>
+            <div className="col">
+              <input type="text" className="form-control" placeholder="Hausnummer" name='hausnummer' onChange={handleChange}></input>
+            </div>
+          </div>
         </div>
       </div>
     </div>
