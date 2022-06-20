@@ -15,20 +15,20 @@ router = APIRouter()
 
 
 @router.get("/")
-def get_all(db: Session = Depends(init_db)):
+def get_all(request: Request, db: Session = Depends(init_db)):
     """
-    Get all accounts registered in the database. \n
+    Get all accounts registered in the database by a user. \n
+    :param request:
     :param db: Database to interact with \n
     :return: List of all accounts
     """
-    return db.query(Appointment).all()
+    return db.query(Appointment).filter(Appointment.email == request.state.__getattr__("email")).all()
 
 
 @router.get("/{id}")
-def get_by_id(email: str, db: Session = Depends(init_db)):
+def get_by_id(db: Session = Depends(init_db)):
     """
     Get a specific account. \n
-    :param email: Email to identify account \n
     :param db: DB to browse \n
     :return: Account matching to email
     """
@@ -49,7 +49,7 @@ def add_event(ra: RequestAppointment, request: Request, db: Session = Depends(in
 
     new_location = Location(
         plz=ra.plz,
-        location=ra.ort
+        location=ra.location
     )
 
     new_citizen = Citizen(
@@ -67,10 +67,10 @@ def add_event(ra: RequestAppointment, request: Request, db: Session = Depends(in
     new_appointment = Appointment(
         email=request.state.__getattr__("email"),
         plz=ra.plz,
-        firstname=ra.vorname,
-        lastname=ra.nachname,
-        address=ra.straße,
-        houseNr=ra.hausenummer,
+        firstname=ra.firstname,
+        lastname=ra.lastname,
+        address=ra.address,
+        houseNr=ra.houseNr,
     )
 
     db.add(new_appointment)

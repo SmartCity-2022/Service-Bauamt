@@ -15,13 +15,14 @@ const Bauantrag = () => {
     vorname: "",
     nachname: "",
     ort: "",
-    plz: "",
+    plz: Number,
     straße: "",
     hausnummer: "",
-    baukosten: "",
-    geschosse: "",
-    wohneinheiten: "",
-    grundflaeche: "",
+    baukosten: Number,
+    geschosse: Number,
+    wohneinheiten: Number,
+    grundflaeche: Number,
+    bauvorhaben: "",
     fertighaus: "",
     heizungsanlage: "",
     nutzung: "",
@@ -38,21 +39,22 @@ const Bauantrag = () => {
   }
 
   const submit = async () => {
-    await axios.post(process.env.REACT_APP_API_URL + '/application/new', {
-      "vorname": state.vorname,
-      "nachname": state.nachname,
-      "ort": state.ort,
-      "plz": state.plz,
-      "straße": state.straße,
-      "hausnummer": state.hausnummer,
-      "fertighaus":state.fertighaus,
-      "nutzung":state.nutzung,
-      "grundflaeche":state.grundflaeche,
-      "geschosse":state.geschosse,
-      "wohneinheiten":state.wohneinheiten,
-      "baukosten":state.baukosten,
-      "bauweise":state.bauweise,
-      "heizungsanlage":state.heizungsanlage,
+    await axios.post(process.env.REACT_APP_API_URL+'application/new', {
+      "firstname": state.vorname,
+      "lastname": state.nachname,
+      "address": state.straße,
+      "houseNr": state.hausnummer,
+      "plz": Number(state.plz),
+      "location": state.ort,
+      "construction_project": state.bauvorhaben,
+      "prefabricated_house": state.fertighaus,
+      "house_use":state.nutzung,
+      "footprint":Number(state.grundflaeche),
+      "floor":Number(state.geschosse),
+      "residential_units":Number(state.wohneinheiten),
+      "building_costs":Number(state.baukosten),
+      "construction":state.bauweise,
+      "heating_system":state.heizungsanlage,
     },
       {withCredentials: true})
   }
@@ -72,10 +74,10 @@ const Bauantrag = () => {
   return (
     <Container maxWidth="" style={allStyle}>
 
-      <div class="row m-2" style={divStyle}>
-        <div class="container">
-          <div class="row header_text_wrapper v-align">
-            <div class="col-xs-12 col-sm-12 col-md-12">
+      <div className="row m-2" style={divStyle}>
+        <div className="container">
+          <div className="row header_text_wrapper v-align">
+            <div className="col-xs-12 col-sm-12 col-md-12">
               <div className='col-md-8 offset-md-2'>
                 <h1 className=''>Erstellen sie kostenlos Ihren Bauantrag</h1>
               </div>
@@ -166,12 +168,12 @@ const Bauantrag = () => {
                 autoComplete="off"
               >
                 <div>
-                  <TextField label="Grundfläche in m²" id="outlined-size-normal" defaultValue="" name='grundflaeche' value={state.grundflaeche} onChange={handleChange}/>
-                  <TextField label="Anzahl der Geschosse" id="outlined-size-normal" defaultValue="" name='geschosse' value={state.geschosse} onChange={handleChange}/>
+                  <TextField type="number" label="Grundfläche in m²" id="outlined-size-normal" name='grundflaeche' onChange={handleChange}/>
+                  <TextField type="number" label="Anzahl der Geschosse" id="outlined-size-normal" name='geschosse' onChange={handleChange}/>
                 </div>
                 <div>
-                  <TextField label="Anzahl der Wohneinheiten" id="outlined-size-normal" defaultValue="" name='wohneinheiten' value={state.wohneinheiten} onChange={handleChange}/>
-                  <TextField label="Baukosten" id="outlined-size-normal" defaultValue="" name='baukosten' value={state.baukosten} onChange={handleChange}/>
+                  <TextField type="number" label="Anzahl der Wohneinheiten" id="outlined-size-normal" name='wohneinheiten' onChange={handleChange}/>
+                  <TextField type="number" label="Baukosten" id="outlined-size-normal" name='baukosten' onChange={handleChange}/>
                 </div>
               </Box>
             </FormControl>
@@ -236,26 +238,24 @@ const Bauantrag = () => {
                 autoComplete="off"
               >
                 <div>
-                  <TextField label="Vorname" id="outlined-size-normal" defaultValue="" name='vorname' value={state.vorname} onChange={handleChange}/>
-                  <TextField label="Nachname" id="outlined-size-normal" defaultValue="" name='nachname' value={state.nachname} onChange={handleChange}/>
+                  <TextField label="Vorname" id="outlined-size-normal" name='vorname' onChange={handleChange}/>
+                  <TextField label="Nachname" id="outlined-size-normal" name='nachname' onChange={handleChange}/>
                 </div>
                 <div>
-                  <TextField label="Ort" id="outlined-size-normal" defaultValue="" name='ort' value={state.ort} onChange={handleChange}/>
-                  <TextField label="PLZ" id="outlined-size-normal" defaultValue="" name='plz' value={state.plz} onChange={handleChange}/>
+                  <TextField label="Ort" id="outlined-size-normal" name='ort' onChange={handleChange}/>
+                  <TextField type="number" label="PLZ" id="outlined-size-normal" name='plz' onChange={handleChange}/>
                 </div>
                 <div>
-                  <TextField label="Straße" id="outlined-size-normal" defaultValue="" name='straße' value={state.straße} onChange={handleChange}/>
-                  <TextField label="Hausnummer" id="outlined-size-normal" defaultValue="" name='hausnummer' value={state.hausnummer} onChange={handleChange}/>
+                  <TextField label="Straße" id="outlined-size-normal" name='straße' onChange={handleChange}/>
+                  <TextField label="Hausnummer" id="outlined-size-normal" name='hausnummer' onChange={handleChange}/>
                 </div>
               </Box>
             </FormControl>
           </div>
 
-          <div className='row p-4'>
-            <div className='col-md-4'>
-              <div className="d-grid gap-2">
-                <button type="submit" className="btn-dark" onClick={submit}>Bauantrag stellen</button>
-              </div>
+          <div className='row'>
+            <div className=''>
+                <button type="submit" className="btn-dark col-md-11 p-2" onClick={submit}>Bauantrag stellen</button>
             </div>
           </div>  
 
