@@ -26,13 +26,70 @@ def get_all(request: Request, db: Session = Depends(init_db)):
 
 
 @router.get("/{id}")
-def get_by_id(db: Session = Depends(init_db)):
+def get_by_id(id: int, db: Session = Depends(init_db)):
     """
     Get a specific account. \n
-    :param email: Email to identify Application \n
+    :param id:
     :param db: DB to browse \n
     :return: Account matching to email
     """
+    return db.query(Application).filter(Application.applicationID == id).first()
+
+
+@router.put("/edit/{id}")
+def update_appointment(id: int, ra: RequestApplication, db: Session = Depends(init_db)):
+    """
+    update a specific appointment. \n
+    :param id:
+    :param ra:
+    :param db: DB to browse \n
+    :return: Account matching to email
+    """
+    if db.query(Application).filter(Application.applicationID == id).first() is None:
+        raise HTTPException(status_code=404, detail="Application not found.")
+
+    if ra.plz and ra.location:
+        new_location = Location(
+            plz=ra.plz,
+            location=ra.location
+        )
+
+        if db.query(Location).filter(Location.plz == ra.plz).first() is None:
+            db.add(new_location)
+            db.commit()
+
+    application = db.query(Application).filter(Application.applicationID == id).first()
+    if ra.plz and ra.location:
+        application.plz = ra.plz,
+    if ra.firstname:
+        application.firstname = ra.firstname,
+    if ra.lastname:
+        application.lastname = ra.lastname,
+    if ra.address:
+        application.address = ra.address,
+    if ra.houseNr:
+        application.houseNr = ra.houseNr,
+    if ra.construction_project:
+        application.construction_project = ra.construction_project,
+    if ra.prefabricated_house:
+        application.prefabricated_house = ra.prefabricated_house,
+    if ra.house_use:
+        application.house_use = ra.house_use,
+    if ra.footprint:
+        application.footprint = ra.footprint,
+    if ra.floor:
+        application.floor = ra.floor,
+    if ra.residential_units:
+        application.residential_units = ra.residential_units,
+    if ra.building_costs:
+        application.building_costs = ra.building_costs,
+    if ra.construction:
+        application.construction = ra.construction,
+    if ra.heating_system:
+        application.heating_system = ra.heating_system,
+
+    db.commit()
+
     return db.query(Application).filter(Application.applicationID == id).first()
 
 
@@ -88,7 +145,7 @@ def add_event(ra: RequestApplication, request: Request, db: Session = Depends(in
 def delete_application(id: int, db: Session = Depends(init_db)):
     if db.query(Application).filter(Application.applicationID == id).first() is None:
         raise HTTPException(status_code=404, detail="Account not found")
-    db.execute(f"DELETE FROM Application WHERE applicationID LIKE '{id}'")
+    db.execute(f"DELETE FROM application WHERE applicationID LIKE '{id}'")
     db.commit()
     return {
         "response": "ok"

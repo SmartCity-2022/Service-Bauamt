@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Container from '@mui/material/Container';
+import { useParams } from 'react-router-dom';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -11,10 +12,10 @@ import axios from 'axios'
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
-const Bauantrag = () => {
+const AntragEdit = () => {
 
-  const [open, setOpen] = React.useState(false);
-  const [state, setState] = useState({
+const [open, setOpen] = React.useState(false);
+const [state, setState] = useState({
     vorname: "",
     nachname: "",
     ort: "",
@@ -30,106 +31,66 @@ const Bauantrag = () => {
     heizungsanlage: "",
     nutzung: "",
     bauweise:""
-  })
+})
 
-  const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-  });
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
+const handleClose = (event, reason) => {
+  if (reason === 'clickaway') {
+    return;
+  }
 
-    setOpen(false);
-  };
+  setOpen(false);
+};
 
-  const handleChange = (event) => {
+const handleChange = (event) => {
     const name = event.target.name
     const value = event.target.value
     setState({
-      ...state,
-      [name]: value
+        ...state,
+        [name]: value
     });
-  }
+}
 
-  const submit = async () => {
-    await axios.post(process.env.REACT_APP_API_URL+'application/new', {
-      "firstname": state.vorname,
-      "lastname": state.nachname,
-      "address": state.straße,
-      "houseNr": state.hausnummer,
-      "plz": Number(state.plz),
-      "location": state.ort,
-      "construction_project": state.bauvorhaben,
-      "prefabricated_house": state.fertighaus,
-      "house_use":state.nutzung,
-      "footprint":Number(state.grundflaeche),
-      "floor":Number(state.geschosse),
-      "residential_units":Number(state.wohneinheiten),
-      "building_costs":Number(state.baukosten),
-      "construction":state.bauweise,
-      "heating_system":state.heizungsanlage,
+const submit = async () => {
+    await axios.put(process.env.REACT_APP_API_URL+'application/edit/'+id, {
+        "firstname": state.vorname,
+        "lastname": state.nachname,
+        "address": state.straße,
+        "houseNr": state.hausnummer,
+        "plz": Number(state.plz),
+        "location": state.ort,
+        "construction_project": state.bauvorhaben,
+        "prefabricated_house": state.fertighaus,
+        "house_use":state.nutzung,
+        "footprint":Number(state.grundflaeche),
+        "floor":Number(state.geschosse),
+        "residential_units":Number(state.wohneinheiten),
+        "building_costs":Number(state.baukosten),
+        "construction":state.bauweise,
+        "heating_system":state.heizungsanlage,
     },
-      {withCredentials: true})
-      .then(response =>{
-        setOpen(true);
-      });
-  }
+    {withCredentials: true})
+    .then(response =>{
+      setOpen(true);
+    });
+}
 
-  const divStyle = {
-    color: "white",
-    background: '#dfc217',
-    heigh: "100%",
-    padding: "1rem",
-  }
-
-  const allStyle = {
-    margin: "0",
-    padding: "0"
-  }
+let {id} = useParams();
 
   return (
-    <Container maxWidth="" style={allStyle}>
+    <Container maxWidth="xl">
+        <div className='row'>
+            <div className='col-md-8 offset-md-2'>
 
-      <div className="row m-2" style={divStyle}>
-        <div className="container">
-          <div className="row header_text_wrapper v-align">
-            <div className="col-xs-12 col-sm-12 col-md-12">
-              <div className='col-md-8 offset-md-2'>
-                <h1 className=''>Erstellen sie kostenlos Ihren Bauantrag</h1>
-              </div>
-            </div>
-          </div>
+        <div className='row mt-4'>
+            <h3>Änderung des Antrages mit der ID {id}</h3>
+            <hr/>
         </div>
-      </div>
-    
 
-      <div className='row'>
-        <div className='col-md-8 offset-md-2'>
-
-          <div className='mt-5 mb-5'>
-            <h4><strong>
-              Baugenehmigung beantragen – ganz einfach online
-            </strong></h4>
-            <p>
-              Nach Erhalt Ihrer Anfrage prüfen wir Ihr Bauvorhaben. Ist Ihre Projektbeschreibung vollständig, erhalten Sie von uns ein kostenloses Angebot für Ihren Bauantrag oder Ihre Nutzungsänderung. Sollten wir noch weitere Informationen benötigen werden wir uns umgehend mit Ihnen in Verbindung setzen.
-            </p>
-            <p><strong>
-              Damit wir Ihr Bauvorhaben bewerten können, machen Sie bitte möglichst genaue und vollständige Angaben.
-            </strong></p>
-            <p>
-            Wir melden uns in der Regel 48 Stunden nach Erhalt der Anfrage. Sollten Sie noch Fragen haben oder ein individuelles Angebot zu Architektenleistungen wünschen, können Sie uns auch eine E-Mail senden oder uns telefonisch unter (+49) 0000 0000000 kontaktieren.
-            </p>
-            <p>
-              Beantragen Sie jetzt Ihre Baugenehmigung schnell, sicher und komplett Digital!
-            </p>
-          </div>
-
-
-
-
-          <div className='row mt-4'>
+        <div className='row mt-4'>
             <FormControl>
               <h4>Bauvorhaben</h4>
               <RadioGroup
@@ -281,11 +242,10 @@ const Bauantrag = () => {
                 <button type="submit" className="btn-dark col-md-11 p-2" onClick={submit}>Bauantrag stellen</button>
             </div>
           </div>  
-
         </div>
-      </div>
+    </div> 
     </Container>
   );
 };
 
-export default Bauantrag;
+export default AntragEdit;

@@ -13,10 +13,11 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import Button from '@mui/material/Button';
+import Link from '@mui/material/Link'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { blue } from '@mui/material/colors';
 
-const pages = ['Projekte', 'Termin','Bauantrag','Infos'];
+const pages = ['Termin','Bauantrag','Infos'];
 const settings = ['Account', 'Logout'];
 
 const Nav = () => {
@@ -127,7 +128,7 @@ const Nav = () => {
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               {pages.map((page) => (
-                  <Button key={page} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }} href={page}>{page}</Button>
+                  <Button key={page} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }} href={"/"+page}>{page}</Button>
               ))}
             </Box>
 
@@ -155,7 +156,7 @@ const Nav = () => {
               >
                 {settings.map((setting) => (
                   <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting}</Typography>
+                    <Typography textAlign="center"><Link href={"/"+setting} underline="none">{setting}</Link></Typography>
                   </MenuItem>
                 ))}
               </Menu>

@@ -1,21 +1,41 @@
 import * as React from 'react';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
-import Stack from '@mui/material/Stack';
 import axios from 'axios'
+import { MenuItem  } from "@mui/material"
+import Stack from '@mui/material/Stack';
 import { useState } from "react"
+import { Box } from "@mui/system"
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
 
 const Termin = () => {
 
+  const [open, setOpen] = React.useState(false);
   const [state, setState] = useState({
-    datum: "",
     vorname: "",
     nachname: "",
     ort: "",
     plz: Number,
     straße: "",
     hausnummer: "",
+    datum: Date,
+    zeit: "",
+    grund: "",
   })
+
+  const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const handleChange = (event) => {
     const name = event.target.name
@@ -24,116 +44,131 @@ const Termin = () => {
       ...state,
       [name]: value
     });
+    console.log(value)
   }
 
+  const timeSlots = Array.from(new Array(24 * 2)).map(
+    (_, index) =>
+        `${index < 20 ? '0' : ''}${Math.floor(index / 2)}:${
+        index % 2 === 0 ? '00' : '30'
+        }`,
+  );
+
+  const auswahl = [
+   "Begutachtung",
+    "Vermessung",
+    "Beratung",
+    "Normaler Termin [Gespräch]"
+  ];
+
   const submit = async () => {
-    await axios.post(process.env.REACT_APP_API_URL + 'appointment/new', {
+    await axios.post(process.env.REACT_APP_API_URL+'appointment/new', {
       "firstname": state.vorname,
       "lastname": state.nachname,
       "address": state.straße,
       "houseNr": state.hausnummer,
       "plz": Number(state.plz),
       "location": state.ort,
+      "reason": state.grund,
+      "date": state.datum,
+      "time": state.zeit
     },
       {withCredentials: true})
+    .then(response =>{
+      setOpen(true);
+    });
   }
-
-  const divStyle = {
-    color: "white",
-    background: '#dfc217',
-    heigh: "100%",
-    padding: "1rem",
-  }
-
-  const allStyle = {
-    margin: "0",
-    padding: "0"
-  }
-
 
   return (
-  <Container maxWidth="" style={allStyle}>
-
-  <div className="row m-2" style={divStyle}>
-    <div className="container">
-      <div className="row header_text_wrapper v-align">
-        <div className="col-xs-12 col-sm-12 col-md-12">
-          <div className='col-md-8 offset-md-2'>
-            <h1 className=''>Machen sie hier ganz einfach ihren Termin</h1>
-          </div>
+    <Container maxWidth="xl">
+    <div className="row my-5">
+        <div className='col-md-8 offset-md-2'>
+    
+        <Box textAlign={"center"}>
+        <div className='row mt-4'>
+            <h4>Vereinbaren sie kostenlos einen Termin</h4>
+            <hr/>
+            <Box
+                component="form"
+                sx={{
+                '& .MuiTextField-root': { m: 1, width: '45%' },
+                }}
+                noValidate
+                autoComplete="off"
+            >
+                <div>
+                <TextField label="Vorname" name='vorname' onChange={handleChange}/>
+                <TextField label="Nachname" name='nachname' onChange={handleChange}/>
+                </div>
+                <div>
+                <TextField label="Ort" name='ort' onChange={handleChange}/>
+                <TextField type="number" label="PLZ" name='plz' onChange={handleChange}/>
+                </div>
+                <div>
+                <TextField label="Straße" name='straße' onChange={handleChange}/>
+                <TextField label="Hausnummer" name='hausnummer' onChange={handleChange}/>
+                </div>
+            </Box>
         </div>
-      </div>
-    </div>
-  </div>
+        </Box>
 
-  <div className="row p-4">
-    <div className='col-md-8 offset-md-2'>
-    <div>
-        <h3>Termin vereinbaren</h3>
-        <hr/>
-    </div>
-    <div className="col-md-3 p-4">
-    <Stack noValidate spacing={3}>
-      <TextField
-        name="datum"
-        id="datetime-local"
-        label="Termin Datum/Uhrzeit"
-        type="datetime-local"
-        defaultValue="2017-05-24T10:30"
-        onChange={handleChange}
-        sx={{ width: 250 }}
-        InputLabelProps={{
-          shrink: true,
-        }}
-      />
-    </Stack>
-    </div>
-    <div className="col-md-9">
-      <div className="p-4">
-        <div>
-          <div className="row pt-2">
-            <div className="col">
-              <input type="text" className="form-control" placeholder="Vorname" name='vorname' onChange={handleChange}></input>
-            </div>
-            <div className="col">
-              <input type="text" className="form-control" placeholder="Nachname" name='nachname' onChange={handleChange}></input>
-            </div>
-          </div>
-          <div className="row pt-2">
-            <div className="col">
-              <input type="text" className="form-control" placeholder="Ort" name='ort' onChange={handleChange}></input>
-            </div>
-            <div className="col">
-              <input type="number" className="form-control" placeholder="PLZ" name='plz' onChange={handleChange}></input>
-            </div>
-          </div>
-          <div className="row pt-2">
-            <div className="col">
-              <input type="text" className="form-control" placeholder="Straße" name='straße' onChange={handleChange}></input>
-            </div>
-            <div className="col">
-              <input type="text" className="form-control" placeholder="Hausnummer" name='hausnummer' onChange={handleChange}></input>
-            </div>
-          </div>
+        <div className='row mt-4'>
+        <Box textAlign={"center"}>
+            <Stack direction="row" spacing={3}>
+            <TextField select
+                size="small"
+                value={state.grund}
+                label="Grund des Termins"
+                onChange={handleChange}
+                name="grund"
+                variant="standard"
+                InputProps={{ style: { fontSize: 14 } }}
+                sx={{width: "60%"}}
+            >
+                <MenuItem key={0} value={""}>-</MenuItem>
+                {Array.isArray(auswahl) && auswahl.map(field => (
+                <MenuItem key={field} value={field}>{field}</MenuItem>
+                ))}
+            </TextField>
+            <TextField
+                label="Datum des Termins"
+                type="date"
+                name="datum"
+                defaultValue="2022-01-01"
+                onChange={handleChange}
+                sx={{ width: 220 }}
+                InputLabelProps={{
+                shrink: true,
+                }}
+            />
+            <TextField select
+                size="small"
+                value={state.zeit}
+                label="Zeitslot"
+                onChange={handleChange}
+                name="zeit"
+                variant="standard"
+                InputProps={{ style: { fontSize: 14 } }}
+                sx={{width: "60%"}}
+            >
+                {Array.isArray(timeSlots) && timeSlots.map(field => (
+                <MenuItem key={field} value={field}>{field}</MenuItem>
+                ))}
+            </TextField>
+            </Stack>
+        </Box>
         </div>
-      </div>
-    </div>
-
-    <div className='row p-4'>
-      <div className='col-md-4'>
-        <div className="d-grid gap-2">
-          <button type="submit" className="btn-dark" onClick={submit}>Termin vereinbaren</button>
+        <Box textAlign={"center"}>
+          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+              Diese Aktion wurde erfolgreich durchgeführt!
+            </Alert>
+          </Snackbar>
+          <button type="submit" className="btn-dark col-md-6 m-3 p-2" onClick={submit}>Termin vereinabren</button>
+        </Box>
         </div>
-      </div>
-    </div>  
-
-
     </div>
-</div>
-
-
-  
-      </Container>
+</Container>
   );
 };
 
