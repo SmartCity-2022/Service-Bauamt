@@ -58,6 +58,9 @@ const submit = async () => {
       "time": state.zeit
     },
       {withCredentials: true})
+      .then(response =>{
+        setOpen(true);
+      });
 }
 
 const timeSlots = Array.from(new Array(24 * 2)).map(
