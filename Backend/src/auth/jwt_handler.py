@@ -1,4 +1,6 @@
 import os
+
+from requests import request
 from starlette import status
 from starlette.responses import JSONResponse
 
@@ -35,7 +37,7 @@ class AuthorizeMiddleware(BaseHTTPMiddleware):
                 http = urllib3.PoolManager()
                 token = http.request("POST",
                                      configParser.get("jwt-secret", "MAIN_HUB_URL") + "/token", {"token": refresh})
-                request.cookies.__setattr__("accessToken", token)
+                request.cookies['accessToken'] = token
                 refresh_decode = jwt.decode(token, os.environ.get("SECRET"), algorithms=["HS256"])
                 request.state.email = refresh_decode.get("email")
             except (
@@ -63,5 +65,6 @@ class AuthorizeMiddleware(BaseHTTPMiddleware):
                 content={"detail": str(error), "body": str(error)}
             )
         else:
+            print(decode.get("email"))
             request.state.email = decode.get("email")
         return await call_next(request)
