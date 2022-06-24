@@ -18,7 +18,9 @@ class Appointment(Base):
     lastname = Column(String(64))
     address = Column(String(64))
     houseNr = Column(String(6))
-    # date = Column(DateTime, default=now())
+    reason = Column(String(64))
+    date = Column(Date)
+    time = Column(Time)
 
     citizen_idx = relationship("Citizen", foreign_keys="Appointment.email")
     location_idx = relationship("Location", foreign_keys="Appointment.plz")

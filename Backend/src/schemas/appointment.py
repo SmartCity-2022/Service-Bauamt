@@ -2,8 +2,7 @@
 JSON Body formats for requests and responses.
 """
 from pydantic import *
-from typing import Optional
-from datetime import datetime
+from datetime import *
 
 
 class RequestAppointment(BaseModel):
@@ -17,6 +16,9 @@ class RequestAppointment(BaseModel):
     houseNr: str
     plz: int
     location: str
+    reason: str
+    date: date
+    time: time
 
     class Config:
         orm_mode = True
@@ -31,6 +33,9 @@ class RespondAppointment(BaseModel):
     lastname: str
     address: str
     houseNr: str
+    reason: str
+    date: date
+    time: time
 
     class Config:
         orm_mode = True

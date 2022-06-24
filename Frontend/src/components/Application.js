@@ -41,6 +41,7 @@ async function deleteRow(id){
             <TableCell align="right">Bauweise</TableCell>
             <TableCell align="right">Heizung</TableCell>
             <TableCell align="right"></TableCell>
+            <TableCell align="right"></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -61,6 +62,7 @@ async function deleteRow(id){
                 <TableCell align="right"> {row.building_costs} </TableCell>
                 <TableCell align="right"> {row.construction} </TableCell>
                 <TableCell align="right"> {row.heating_system} </TableCell>
+                <TableCell align="right"> <Button size="small" href={"AntragEdit/" + row.applicationID} variant="contained">Edit</Button></TableCell>
                 <TableCell align="right"> <Button size="small" variant="contained" onClick={() => deleteRow(row.applicationID)}>Löschen</Button></TableCell>
                 
                 </TableRow>

@@ -25,15 +25,68 @@ def get_all(request: Request, db: Session = Depends(init_db)):
     return db.query(Appointment).filter(Appointment.email == request.state.__getattr__("email")).all()
 
 
+@router.get("/dateandtime")
+def date_time(db: Session = Depends(init_db)):
+    """
+    Get all dates and times. \n
+    :param db: DB to browse \n
+    """
+    return db.query(Appointment.date, Appointment.time).order_by(Appointment.date.asc(), Appointment.time.asc()).all()
+
+
 @router.get("/{id}")
-def get_by_id(db: Session = Depends(init_db)):
+def get_by_id(id: int, db: Session = Depends(init_db)):
     """
     Get a specific account. \n
+    :param id:
     :param db: DB to browse \n
     :return: Account matching to email
     """
     if db.query(Appointment).filter(Appointment.appointmentID == id).first() is None:
         raise HTTPException(status_code=404, detail="Account not found.")
+    return db.query(Appointment).filter(Appointment.appointmentID == id).first()
+
+
+@router.put("/edit/{id}")
+def update_appointment(id: int, ra: RequestAppointment, db: Session = Depends(init_db)):
+    """
+    update a specific appointment. \n
+    :param id:
+    :param ra:
+    :param db: DB to browse \n
+    :return: Account matching to email
+    """
+    if db.query(Appointment).filter(Appointment.appointmentID == id).first() is None:
+        raise HTTPException(status_code=404, detail="Appointment not found.")
+
+    if ra.plz and ra.location:
+        new_location = Location(
+            plz=ra.plz,
+            location=ra.location
+        )
+
+        if db.query(Location).filter(Location.plz == ra.plz).first() is None:
+            db.add(new_location)
+            db.commit()
+
+    appointment = db.query(Appointment).filter(Appointment.appointmentID == id).first()
+    if ra.plz and ra.location:
+        appointment.plz = ra.plz,
+    if ra.firstname:
+        appointment.firstname = ra.firstname,
+    if ra.lastname:
+        appointment.lastname = ra.lastname,
+    if ra.address:
+        appointment.address = ra.address,
+    if ra.houseNr:
+        appointment.houseNr = ra.houseNr,
+    if ra.date:
+        appointment.date = ra.date,
+    if ra.time:
+        appointment.time = ra.time,
+
+    db.commit()
+
     return db.query(Appointment).filter(Appointment.appointmentID == id).first()
 
 
@@ -71,6 +124,9 @@ def add_event(ra: RequestAppointment, request: Request, db: Session = Depends(in
         lastname=ra.lastname,
         address=ra.address,
         houseNr=ra.houseNr,
+        reason=ra.reason,
+        date=ra.date,
+        time=ra.time
     )
 
     db.add(new_appointment)
@@ -79,10 +135,10 @@ def add_event(ra: RequestAppointment, request: Request, db: Session = Depends(in
 
 
 @router.delete("/{id}/delete")
-def delete_application(id: int, db: Session = Depends(init_db)):
+def delete_appointment(id: int, db: Session = Depends(init_db)):
     if db.query(Appointment).filter(Appointment.appointmentID == id).first() is None:
         raise HTTPException(status_code=404, detail="Account not found")
-    db.execute(f"DELETE FROM Appointment WHERE appointmentID LIKE '{id}'")
+    db.execute(f"DELETE FROM appointment WHERE appointmentID LIKE '{id}'")
     db.commit()
     return {
         "response": "ok"
