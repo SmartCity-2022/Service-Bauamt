@@ -31,6 +31,8 @@ async function deleteRow(id){
             <TableCell align="right">Vorname</TableCell>
             <TableCell align="right">Nachname</TableCell>
             <TableCell align="right">Adresse</TableCell>
+            <TableCell align="right">Datum</TableCell>
+            <TableCell align="right">Zeitslot</TableCell>
             <TableCell align="right">PLZ</TableCell>
             <TableCell align="right"></TableCell>
             <TableCell align="right"></TableCell>
@@ -45,6 +47,8 @@ async function deleteRow(id){
               <TableCell align="right"> {row.firstname} </TableCell>
               <TableCell align="right"> {row.lastname} </TableCell>
               <TableCell align="right"> {row.address} {row.houseNr} </TableCell>
+              <TableCell align="right"> {row.date} </TableCell>
+              <TableCell align="right"> {row.time} </TableCell>
               <TableCell align="right"> {row.plz} </TableCell>
               <TableCell align="right"> <Button size="small" href={"TerminEdit/" + row.appointmentID} variant="contained">Edit</Button></TableCell>
               <TableCell align="right"> <Button size="small" variant="contained" onClick={() => deleteRow(row.appointmentID)}>Löschen</Button></TableCell>
