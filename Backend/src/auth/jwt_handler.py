@@ -30,14 +30,14 @@ class AuthorizeMiddleware(BaseHTTPMiddleware):
                 content={"detail": "Cookies", "body": "Missing cookies"}
             )
         try:
-            print(os.environ.get("SECRET"))
             decode = jwt.decode(access, os.environ.get("SECRET"), algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
             try:
                 http = urllib3.PoolManager()
                 token = http.request("POST",
                                      configParser.get("jwt-secret", "MAIN_HUB_URL") + "/token", {"token": refresh})
-                request.cookies['accessToken'] = token
+                print(token["accessToken"])
+                request.cookies['accessToken'] = token["accessToken"]
                 refresh_decode = jwt.decode(token, os.environ.get("SECRET"), algorithms=["HS256"])
                 request.state.email = refresh_decode.get("email")
             except (
