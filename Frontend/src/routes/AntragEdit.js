@@ -82,6 +82,7 @@ let {id} = useParams();
 
   return (
     <Container maxWidth="xl">
+      <form onSubmit={submit}>
         <div className='row'>
             <div className='col-md-8 offset-md-2'>
 
@@ -139,7 +140,6 @@ let {id} = useParams();
             <FormControl>
               <h4>Projektumfang</h4>
               <Box
-                component="form"
                 sx={{
                   '& .MuiTextField-root': { m: 1, width: '45%' },
                 }}
@@ -147,12 +147,12 @@ let {id} = useParams();
                 autoComplete="off"
               >
                 <div>
-                  <TextField type="number" label="Grundfläche in m²" id="outlined-size-normal" name='grundflaeche' onChange={handleChange}/>
-                  <TextField type="number" label="Anzahl der Geschosse" id="outlined-size-normal" name='geschosse' onChange={handleChange}/>
+                  <TextField required type="number" label="Grundfläche in m²" id="outlined-size-normal" name='grundflaeche' onChange={handleChange}/>
+                  <TextField required type="number" label="Anzahl der Geschosse" id="outlined-size-normal" name='geschosse' onChange={handleChange}/>
                 </div>
                 <div>
-                  <TextField type="number" label="Anzahl der Wohneinheiten" id="outlined-size-normal" name='wohneinheiten' onChange={handleChange}/>
-                  <TextField type="number" label="Baukosten" id="outlined-size-normal" name='baukosten' onChange={handleChange}/>
+                  <TextField required type="number" label="Anzahl der Wohneinheiten" id="outlined-size-normal" name='wohneinheiten' onChange={handleChange}/>
+                  <TextField required type="number" label="Baukosten" id="outlined-size-normal" name='baukosten' onChange={handleChange}/>
                 </div>
               </Box>
             </FormControl>
@@ -209,7 +209,6 @@ let {id} = useParams();
             <FormControl>
               <h4>Persönliche Daten</h4>
               <Box
-                component="form"
                 sx={{
                   '& .MuiTextField-root': { m: 1, width: '45%' },
                 }}
@@ -221,8 +220,8 @@ let {id} = useParams();
                   <TextField label="Nachname" id="outlined-size-normal" name='nachname' onChange={handleChange}/>
                 </div>
                 <div>
-                  <TextField label="Ort" id="outlined-size-normal" name='ort' onChange={handleChange}/>
-                  <TextField type="number" label="PLZ" id="outlined-size-normal" name='plz' onChange={handleChange}/>
+                  <TextField required label="Ort" id="outlined-size-normal" name='ort' onChange={handleChange}/>
+                  <TextField required type="number" label="PLZ" id="outlined-size-normal" name='plz' onChange={handleChange}/>
                 </div>
                 <div>
                   <TextField label="Straße" id="outlined-size-normal" name='straße' onChange={handleChange}/>
@@ -243,7 +242,8 @@ let {id} = useParams();
             </div>
           </div>  
         </div>
-    </div> 
+      </div> 
+    </form>
     </Container>
   );
 };

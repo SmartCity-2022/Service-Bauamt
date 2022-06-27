@@ -59,8 +59,8 @@ const submit = async () => {
     },
       {withCredentials: true})
       .then(response =>{
-        setOpen(true);
-      });
+      setOpen(true);
+    });
 }
 
 const timeSlots = Array.from(new Array(24 * 2)).map(
@@ -81,6 +81,7 @@ const auswahl = [
 
   return (
     <Container maxWidth="xl">
+    <form onSubmit={submit}>
         <div className="row my-5">
             <div className='col-md-8 offset-md-2'>
         
@@ -89,7 +90,6 @@ const auswahl = [
                 <h4>Änderung eines Termins mit der ID: {id}</h4>
                 <hr/>
                 <Box
-                    component="form"
                     sx={{
                     '& .MuiTextField-root': { m: 1, width: '45%' },
                     }}
@@ -101,8 +101,8 @@ const auswahl = [
                     <TextField label="Nachname" name='nachname' onChange={handleChange}/>
                     </div>
                     <div>
-                    <TextField label="Ort" name='ort' onChange={handleChange}/>
-                    <TextField type="number" label="PLZ" name='plz' onChange={handleChange}/>
+                    <TextField required label="Ort" name='ort' onChange={handleChange}/>
+                    <TextField required type="number" label="PLZ" name='plz' onChange={handleChange}/>
                     </div>
                     <div>
                     <TextField label="Straße" name='straße' onChange={handleChange}/>
@@ -116,6 +116,7 @@ const auswahl = [
             <Box textAlign={"center"}>
                 <Stack direction="row" spacing={3}>
                 <TextField select
+                    required
                     size="small"
                     value={state.grund}
                     label="Grund des Termins"
@@ -131,6 +132,7 @@ const auswahl = [
                     ))}
                 </TextField>
                 <TextField
+                    required
                     label="Datum des Termins"
                     type="date"
                     name="datum"
@@ -142,6 +144,7 @@ const auswahl = [
                     }}
                 />
                 <TextField select
+                    required
                     size="small"
                     value={state.zeit}
                     label="Zeitslot"
@@ -168,6 +171,7 @@ const auswahl = [
             </Box>
             </div>
         </div>
+    </form>
     </Container>
   );
 };
