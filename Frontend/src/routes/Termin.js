@@ -44,7 +44,6 @@ const Termin = () => {
       ...state,
       [name]: value
     });
-    console.log(value)
   }
 
   const timeSlots = Array.from(new Array(24 * 2)).map(
@@ -81,56 +80,57 @@ const Termin = () => {
 
   return (
     <Container maxWidth="xl">
-    <div className="row my-5">
-        <div className='col-md-8 offset-md-2'>
+      <form onSubmit={submit}>
     
-        <Box textAlign={"center"}>
-        <div className='row mt-4'>
-            <h4>Vereinbaren sie kostenlos einen Termin</h4>
-            <hr/>
-            <Box
-                component="form"
+      <div className="row my-5">
+        <div className='col-md-8 offset-md-2'>
+      
+          <Stack textAlign={"center"}>
+            <div className='row mt-4'>
+              <h4>Vereinbaren sie kostenlos einen Termin</h4>
+              <hr/>
+              <Box
                 sx={{
                 '& .MuiTextField-root': { m: 1, width: '45%' },
                 }}
                 noValidate
                 autoComplete="off"
-            >
+              >
                 <div>
-                <TextField label="Vorname" name='vorname' onChange={handleChange}/>
-                <TextField label="Nachname" name='nachname' onChange={handleChange}/>
+                  <TextField label="Vorname" name='vorname' onChange={handleChange}/>
+                  <TextField label="Nachname" name='nachname' onChange={handleChange}/>
                 </div>
                 <div>
-                <TextField label="Ort" name='ort' onChange={handleChange}/>
-                <TextField type="number" label="PLZ" name='plz' onChange={handleChange}/>
+                  <TextField required label="Ort" name='ort' onChange={handleChange}/>
+                  <TextField required type="number" label="PLZ" name='plz' onChange={handleChange}/>
                 </div>
                 <div>
-                <TextField label="Straße" name='straße' onChange={handleChange}/>
-                <TextField label="Hausnummer" name='hausnummer' onChange={handleChange}/>
+                  <TextField label="Straße" name='straße' onChange={handleChange}/>
+                  <TextField label="Hausnummer" name='hausnummer' onChange={handleChange}/>
                 </div>
-            </Box>
-        </div>
-        </Box>
+              </Box>
+            </div>
 
-        <div className='row mt-4'>
-        <Box textAlign={"center"}>
+            <div className='row mt-4'>
             <Stack direction="row" spacing={3}>
-            <TextField select
+              <TextField select
                 size="small"
                 value={state.grund}
                 label="Grund des Termins"
+                required
                 onChange={handleChange}
                 name="grund"
                 variant="standard"
                 InputProps={{ style: { fontSize: 14 } }}
                 sx={{width: "60%"}}
-            >
-                <MenuItem key={0} value={""}>-</MenuItem>
-                {Array.isArray(auswahl) && auswahl.map(field => (
-                <MenuItem key={field} value={field}>{field}</MenuItem>
-                ))}
-            </TextField>
-            <TextField
+              >
+                  <MenuItem key={0} value={""}>-</MenuItem>
+                  {Array.isArray(auswahl) && auswahl.map(field => (
+                  <MenuItem key={field} value={field}>{field}</MenuItem>
+                  ))}
+              </TextField>
+              <TextField
+                required
                 label="Datum des Termins"
                 type="date"
                 name="datum"
@@ -140,8 +140,9 @@ const Termin = () => {
                 InputLabelProps={{
                 shrink: true,
                 }}
-            />
-            <TextField select
+              />
+              <TextField select
+                required
                 size="small"
                 value={state.zeit}
                 label="Zeitslot"
@@ -150,24 +151,29 @@ const Termin = () => {
                 variant="standard"
                 InputProps={{ style: { fontSize: 14 } }}
                 sx={{width: "60%"}}
-            >
+              >
                 {Array.isArray(timeSlots) && timeSlots.map(field => (
                 <MenuItem key={field} value={field}>{field}</MenuItem>
                 ))}
-            </TextField>
+              </TextField>
             </Stack>
-        </Box>
-        </div>
-        <Box textAlign={"center"}>
-          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-              Diese Aktion wurde erfolgreich durchgeführt!
-            </Alert>
-          </Snackbar>
-          <button type="submit" className="btn-dark col-md-6 m-3 p-2" onClick={submit}>Termin vereinabren</button>
-        </Box>
-        </div>
-    </div>
+            </div>
+            
+          </Stack>
+
+          <Box textAlign={"center"}>
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                Diese Aktion wurde erfolgreich durchgeführt!
+              </Alert>
+            </Snackbar>
+              <button type="submit" className="btn-dark col-md-6 m-3 p-2">Termin vereinabren</button>
+          </Box>
+
+          </div>
+      </div>
+    
+  </form>
 </Container>
   );
 };
